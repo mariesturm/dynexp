@@ -1,0 +1,354 @@
+// This file is part of DynExp.
+
+/**
+ * @file Laser.h
+ * @brief Defines a meta instrument for a laser.
+*/
+
+#pragma once
+
+#include "stdafx.h"
+#include "Instrument.h"
+
+namespace DynExpInstr
+{
+	class Laser;
+
+	/**
+	 * @brief Tasks for @p Laser
+	*/
+	namespace LaserTasks
+	{
+		/**
+		 * @copydoc DynExp::InitTaskBase
+		*/
+		class InitTask : public DynExp::InitTaskBase
+		{
+			void InitFuncImpl(dispatch_tag<InitTaskBase>, DynExp::InstrumentInstance& Instance) override final { InitFuncImpl(dispatch_tag<InitTask>(), Instance); }
+
+			/**
+			 * @copydoc InitFuncImpl(dispatch_tag<DynExp::InitTaskBase>, DynExp::InstrumentInstance&)
+			*/
+			virtual void InitFuncImpl(dispatch_tag<InitTask>, DynExp::InstrumentInstance& Instance) {}
+		};
+
+		/**
+		 * @copydoc DynExp::ExitTaskBase
+		*/
+		class ExitTask : public DynExp::ExitTaskBase
+		{
+			void ExitFuncImpl(dispatch_tag<ExitTaskBase>, DynExp::InstrumentInstance& Instance) override final { ExitFuncImpl(dispatch_tag<ExitTask>(), Instance); }
+
+			/**
+			 * @copydoc ExitFuncImpl(dispatch_tag<DynExp::ExitTaskBase>, DynExp::InstrumentInstance&)
+			*/
+			virtual void ExitFuncImpl(dispatch_tag<ExitTask>, DynExp::InstrumentInstance& Instance) {}
+		};
+
+		/**
+		 * @copydoc DynExp::UpdateTaskBase
+		*/
+		class UpdateTask : public DynExp::UpdateTaskBase
+		{
+			void UpdateFuncImpl(dispatch_tag<UpdateTaskBase>, DynExp::InstrumentInstance& Instance) override final { UpdateFuncImpl(dispatch_tag<UpdateTask>(), Instance); }
+
+			/**
+			 * @copydoc UpdateFuncImpl(dispatch_tag<DynExp::UpdateTaskBase>, DynExp::InstrumentInstance&)
+			*/
+			virtual void UpdateFuncImpl(dispatch_tag<UpdateTask>, DynExp::InstrumentInstance& Instance) {}
+		};
+	}
+
+	/**
+	 * @brief Data class for @p Laser
+	*/
+	class LaserData : public DynExp::InstrumentDataBase
+	{
+	public:
+		/**
+		 * @brief Supported lasers frequency units.
+		 * @warning If this is changed, also change @p ConvertFrequencyUnitType() functions in
+		 * @p NetworkLaser.h and @p FrequencyUnitType enumeration in @p Common.proto.
+		*/
+		enum class FrequencyUnitType {
+			Hz,			//!< Frequency in Hz
+			nm,			//!< Wavelength in nm
+		};
+
+		/**
+		 * @brief Supported laser intensity units.
+		 * @warning If this is changed, also change @p ConvertIntensityUnitType() functions in
+		 * @p NetworkLaser.h and @p IntensityUnitType enumeration in @p Common.proto.
+		*/
+		enum class IntensityUnitType {
+			Power_W		//!< Intensity in Watts
+		};
+		
+		/**
+		 * @brief Returns a descriptive string of a respective frequency unit to be e.g. used in the UI.
+		 * @param Unit Frequency unit type as used by laser instruments.
+		 * @return Unit string
+		*/
+		static const char* FrequencyUnitTypeToStr(const FrequencyUnitType& Unit);
+
+		/**
+		 * @brief Returns a descriptive string of a respective intensity unit to be e.g. used in the UI.
+		 * @param Unit Intensity unit type as used by laser instruments.
+		 * @return Unit string
+		*/
+		static const char* IntensityUnitTypeToStr(const IntensityUnitType& Unit);
+
+		/**
+		 * @brief Converts a frequency value in Hz to the wavelength in nm and vice versa
+		 * @param Value Frequency in Hz or wavelength in nm
+		 * @return Value double
+		*/
+		static const double FrequencyWavelengthConversion(double Frequency) noexcept { return 299792458 / Frequency * 1e9; }
+
+		/**
+		 * @brief Possible laser states.
+		*/
+		enum class LaserStateType {
+			Startup,					//!< The laser is tuning to the set frequency.
+			Ready,						//!< The frequency is set and the laser is ready for emission.
+			EmissionEnabledConstant,	//!< The laser is emitting in controle mode.
+			EmissionEnabledScanning,	//!< The laser is emitting in scan mode.
+			Error,						//!< The laser is in an error state.
+		};
+
+		LaserData() = default;
+		virtual ~LaserData() = default;
+
+		void SetFrequencyValue(double Frequency) noexcept { this->Frequency = Frequency; }				//!< Setter for #Frequency.
+		auto GetFrequencyValue() const noexcept { return Frequency; }									//!< Getter for #Frequency.
+		void SetIntensityValue(double Intensity) noexcept { this->Intensity = Intensity; }				//!< Setter for #Intensity.
+		auto GetIntensityValue() const noexcept { return Intensity; }									//!< Getter for #Intensity.
+		void SetScanRangeValue(double ScanRange) noexcept { this->ScanRange = ScanRange; }				//!< Setter for #ScanRange.
+		auto GetScanRangeValue() const noexcept { return ScanRange; }									//!< Getter for #ScanRange.
+		void SetScanRateValue(double ScanRate) noexcept { this->ScanRate = ScanRate; }					//!< Setter for #ScanRate.
+		auto GetScanRateValue() const noexcept { return ScanRate; }										//!< Getter for #ScanRate.
+
+		/**
+		 * @brief Returns the laser's current state.
+		 * @return State of type LaserData::StateType
+		*/
+		auto GetLaserState() const noexcept { return GetLaserStateChild(); }
+		
+	private:
+		void ResetImpl(dispatch_tag<InstrumentDataBase>) override final;
+		virtual void ResetImpl(dispatch_tag<LaserData>) {};					//!< @copydoc ResetImpl(dispatch_tag<DynExp::InstrumentDataBase>)
+
+		/** @name Override
+		 * Override by derived classes.
+		*/
+		///@{
+		virtual LaserStateType GetLaserStateChild() const noexcept = 0;		//!< @copydoc GetLaserState
+		///@}
+
+		double Frequency = 0.0;				//!< Current frequency 
+		double Intensity = 0.0;				//!< Current intensity
+		double ScanRange = 0.0;				//!< Current scan range
+		double ScanRate = 0.0;				//!< Current scan rate
+	};
+
+	/**
+	 * @brief Parameter class for @p Laser.
+	*/
+	class LaserParams : public DynExp::InstrumentParamsBase
+	{
+	public:
+		/**
+		 * @brief Constructs the parameters for a @p Laser instance.
+		 * @copydetails DynExp::ParamsBase::ParamsBase
+		*/
+		LaserParams(DynExp::ItemIDType ID, const DynExp::DynExpCore& Core) : InstrumentParamsBase(ID, Core) {}
+
+		virtual ~LaserParams() = 0;
+
+		virtual const char* GetParamClassTag() const noexcept override { return "LaserParams"; }
+
+	private:
+		void ConfigureParamsImpl(dispatch_tag<InstrumentParamsBase>) override final { ConfigureParamsImpl(dispatch_tag<LaserParams>()); }
+		virtual void ConfigureParamsImpl(dispatch_tag<LaserParams>) {}	//!< @copydoc ConfigureParamsImpl(dispatch_tag<DynExp::InstrumentParamsBase>)
+
+		DummyParam Dummy = { *this };											//!< @copydoc DynExp::ParamsBase::DummyParam
+	};
+
+	/**
+	 * @brief Configurator class for @p Laser
+	*/
+	class LaserConfigurator : public DynExp::InstrumentConfiguratorBase
+	{
+	public:
+		using ObjectType = Laser;
+		using ParamsType = LaserParams;
+
+		LaserConfigurator() = default;
+		virtual ~LaserConfigurator() = 0;
+	};
+
+	/**
+	 * @brief Meta instrument for a laser.
+	*/
+	class Laser : public DynExp::InstrumentBase
+	{
+	public:
+		using ParamsType = LaserParams;										//!< @copydoc DynExp::Object::ParamsType
+		using ConfigType = LaserConfigurator;								//!< @copydoc DynExp::Object::ConfigType
+		using InstrumentDataType = LaserData;								//!< @copydoc DynExp::InstrumentBase::InstrumentDataType
+
+		/** @name gRPC aliases
+		 * Redefined to use this instrument with DynExpInstr::gRPCInstrument.
+		*/
+		///@{
+		using InitTaskType = LaserTasks::InitTask;							//!< @copydoc DynExp::InitTaskBase
+		using ExitTaskType = LaserTasks::ExitTask;							//!< @copydoc DynExp::ExitTaskBase
+		using UpdateTaskType = LaserTasks::UpdateTask;						//!< @copydoc DynExp::UpdateTaskBase
+		///@}
+
+		constexpr static auto Name() noexcept { return "Laser"; }			//!< @copydoc DynExp::SerialCommunicationHardwareAdapter::Name
+		constexpr static auto Category() noexcept { return "Laser"; }		//!< @copydoc DynExp::InstrumentBase::Category
+
+		/**
+		 * @copydoc DynExp::InstrumentBase::InstrumentBase
+		*/
+		Laser(const std::thread::id OwnerThreadID, DynExp::ParamsBasePtrType&& Params)
+			: InstrumentBase(OwnerThreadID, std::move(Params)) {
+		}
+
+		virtual ~Laser() = 0;
+
+		virtual std::string GetName() const override { return Name(); }
+		virtual std::string GetCategory() const override { return Category(); }
+
+		virtual std::chrono::milliseconds GetTaskQueueDelay() const override { return std::chrono::milliseconds(50); }
+
+		/** @name Override (instrument information)
+			* Override by derived classes to provide information about the instrument.
+		*/
+		///@{
+		/**
+			* @brief Determines the frequency unit.
+			* @return Frequency unit
+		*/
+		virtual LaserData::FrequencyUnitType GetFrequencyUnit() const = 0;
+		
+		/**
+			* @brief Determines the intensity unit.
+			* @return Intensity unit
+		*/
+		virtual LaserData::IntensityUnitType GetIntensityUnit() const = 0;
+
+		/**
+		 * @brief Determines the minimal emission frequency.
+		 * @return Minimal emission frequency in units of @p GetFrequencyUnit().
+		*/
+		virtual double GetMinFrequency() const = 0;
+
+		/**
+		 * @brief Determines the maximal emission frequency.
+		 * @return Maximal emission frequency in units of @p GetFrequencyUnit().
+		*/
+		virtual double GetMaxFrequency() const = 0;
+
+		/**
+		 * @brief Determines the minimal emission intensity.
+		 * @return Minimal emission intensity in units of @p GetIntensityUnit().
+		*/
+		virtual double GetMinIntensity() const = 0;
+
+		/**
+		 * @brief Determines the maximal emission intensity.
+		 * @return Maximal emission intensity in units of @p GetIntensityUnit().
+		*/
+		virtual double GetMaxIntensity() const = 0;
+
+		/**
+		 * @brief Determines the minimal scan bandwidth.
+		 * @return Minimal bandwidth in units of @p GetFrequencyUnit().
+		*/
+		virtual double GetMinBandwidth() const = 0;
+
+		/**
+		 * @brief Determines the maximal scan bandwidth.
+		 * @return Maximal scan bandwidth in units of @p GetFrequencyUnit().
+		*/
+		virtual double GetMaxBandwidth() const = 0;
+
+		/**
+		 * @brief Determines the maximal scan rate.
+		 * @return Maximal scan rate in units of @p GetFrequencyUnit() per second.
+		*/
+		virtual double GetMaxRate() const = 0;
+
+		/**
+		 * @brief Determines the mode hop free tuning range.
+		 * @return Mode hop free tuning range in units of @p GetFrequencyUnit().
+		*/
+		virtual double GetModeHopFreeTuningRange() const = 0;
+		///@}
+
+		/** @name Override (instrument tasks)
+		 * Override by derived classes to insert tasks into the instrument's task queue.
+		 * Logical const-ness: const member functions to allow modules inserting tasks into
+		 * the instrument's task queue.
+		*/
+		///@{
+		/**
+		 * @brief Sets the laser's emission frequency.
+		 * @param Frequency Emission frequency
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void SetFrequency(double Frequency, DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Sets the laser's output intensity.
+		 * @param Intensity Output intensity
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void SetIntensity(double Intensity, DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Sets the laser's scan range.
+		 * @param Bandwidth Bandwidth for scan
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void SetScanRange(double ScanRange, DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Sets the laser's scan rate.
+		 * @param Rate Rate of scan
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void SetScanRate(double ScanRate, DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Enables emission in constant mode.
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void Enable(DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Disables emission.
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void Disable(DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Enables emission in scan mode.
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void ScanContinuously(DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+
+		/**
+		 * @brief Disables scan and changes to constant emission mode.
+		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
+		*/
+		virtual void DisableScan(DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;
+		///@}
+
+	private:
+		void ResetImpl(dispatch_tag<InstrumentBase>) override final;
+		virtual void ResetImpl(dispatch_tag<Laser>) = 0;			//!< @copydoc ResetImpl(dispatch_tag<DynExp::InstrumentBase>)
+	};
+}

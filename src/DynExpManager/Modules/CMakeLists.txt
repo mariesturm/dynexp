@@ -20,7 +20,7 @@ target_sources(DynExpModules PRIVATE "StreamManipulator.cpp" "StreamManipulator.
 target_sources(DynExpModules PRIVATE "Trajectory1D.cpp" "Trajectory1D.h" "Trajectory1D.ui")
 
 add_subdirectory(ImageViewer)
-add_subdirectory(ODMR)
 add_subdirectory(LaserScanningSpectroscopy)
+add_subdirectory(ODMR)
 add_subdirectory(SpectrumViewer)
 add_subdirectory(WidefieldMicroscope)

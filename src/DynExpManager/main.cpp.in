@@ -92,6 +92,7 @@
 #include "Modules/ImageViewer/ImageViewer.h"
 #include "Modules/InputPortReader.h"
 #include "Modules/LaserControl.h"
+#include "Modules/LaserScanningSpectroscopy/LaserScanningSpectroscopy.h"
 #include "Modules/LockinAmplifierControl.h"
 #include "Modules/NetworkAnalogInModule.h"
 #include "Modules/NetworkAnalogOutModule.h"
@@ -100,7 +101,6 @@
 #include "Modules/NetworkDigitalOutModule.h"
 #include "Modules/NetworkTimeTaggerModule.h"
 #include "Modules/OutputPortWriter.h"
-#include "Modules/LaserScanningSpectroscopy/LaserScanningSpectroscopy.h"
 #include "Modules/SignalDesigner.h"
 #include "Modules/SignalPlotter.h"
 #include "Modules/SpectrumViewer/SpectrumViewer.h"
@@ -196,6 +196,7 @@ int main(int argc, char *argv[])
 		DynExpModule::ImageViewer::ImageViewer,
 		DynExpModule::InputPortReader,
 		DynExpModule::LaserControl,
+		DynExpModule::LaserScanningSpectroscopy::LaserScanningSpectroscopy,
 		DynExpModule::LockinAmplifierControl,
 		DynExpModule::NetworkAnalogIn,
 		DynExpModule::NetworkAnalogOut,
@@ -204,7 +205,6 @@ int main(int argc, char *argv[])
 		DynExpModule::NetworkDigitalOut,
 		DynExpModule::NetworkTimeTagger,
 		DynExpModule::OutputPortWriter,
-		DynExpModule::LaserScanningSpectroscopy::LaserScanningSpectroscopy,
 		DynExpModule::SignalDesigner,
 		DynExpModule::SignalPlotter,
 		DynExpModule::SpectrumViewer::SpectrumViewer,

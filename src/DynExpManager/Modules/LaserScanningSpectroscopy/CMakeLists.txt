@@ -1,4 +1,4 @@
-target_sources(DynExp PRIVATE
+target_sources(DynExpModules PRIVATE
 	"LaserScanningSpectroscopy.cpp"
 	"LaserScanningSpectroscopy.h"
 	"LaserScanningSpectroscopy.ui"

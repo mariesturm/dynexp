@@ -1,5 +1,10 @@
 // This file is part of DynExp.
 
+/**
+ * @file LaserControl.h
+ * @brief Implementation of a module to control a laser source.
+*/
+
 #pragma once
 
 #include "stdafx.h"
@@ -28,7 +33,6 @@ namespace DynExpModule
 
 		bool AllowResize() const noexcept override final { return true; }
 
-		//const auto& GetUI() const noexcept { return ui; }
 		const auto GetUI() const noexcept { return ui.get(); }
 
 		void InitializeUI(Util::SynchronizedPointer<LaserControlData>& ModuleData);
@@ -36,7 +40,6 @@ namespace DynExpModule
 
 	private:
 		std::unique_ptr<Ui::LaserControl> ui;
-		/*Ui::LaserControl ui;*/
 	};
 
 	class LaserControlData : public DynExp::QModuleDataBase

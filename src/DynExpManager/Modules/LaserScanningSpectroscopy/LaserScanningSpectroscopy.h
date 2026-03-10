@@ -1,15 +1,25 @@
 // This file is part of DynExp.
 
+/**
+ * @file LaserScanningSpectroscopy.h
+ * @brief Implementation of a module to perform photoluminescence excitation spectroscopy.
+*/
+
 #pragma once
 
 #include "stdafx.h"
 #include "DynExpCore.h"
 #include "../../MetaInstruments/Laser.h"
 #include "../../Instruments/InterModuleCommunicator.h"
+
 #include "CommonModuleEvents.h"
-#include "ui_LaserScanningSpectroscopy.h"
 
 #include <QWidget>
+
+namespace Ui
+{
+	class LaserScanningSpectroscopy;
+}
 
 namespace DynExpModule::LaserScanningSpectroscopy
 {
@@ -33,12 +43,12 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		~LaserScanningSpectroscopyWidget() = default;
 
 		bool AllowResize() const noexcept override final { return true; }
-		const auto& GetUI() const noexcept { return ui; }
+		const auto GetUI() const noexcept { return ui.get(); }
 
 		void InitializeUI(Util::SynchronizedPointer<LaserScanningSpectroscopyData>& ModuleData);
 		void UpdateUI(Util::SynchronizedPointer<LaserScanningSpectroscopyData>& ModuleData);
 	
-		Ui::LaserScanningSpectroscopy ui;
+		std::unique_ptr<Ui::LaserScanningSpectroscopy> ui;
 
 	private slots:
 		void OnPathBrowseClicked();

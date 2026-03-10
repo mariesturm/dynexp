@@ -2,65 +2,63 @@
 
 #include "stdafx.h"
 #include "moc_LaserScanningSpectroscopy.cpp"
+#include "ui_LaserScanningSpectroscopy.h"
 #include "LaserScanningSpectroscopy.h"
-
-#include <QDir>
-#include <thread>
-#include <chrono>
 
 namespace DynExpModule::LaserScanningSpectroscopy
 {
 	LaserScanningSpectroscopyWidget::LaserScanningSpectroscopyWidget(LaserScanningSpectroscopy& Owner, QModuleWidget* parent)
-		: QModuleWidget(Owner, parent)
+		: QModuleWidget(Owner, parent),
+		ui(std::make_unique<Ui::LaserScanningSpectroscopy>())
 	{
-		ui.setupUi(this);
+		ui->setupUi(this);
 
 		// For shortcuts
-		this->addAction(ui.action_Start);
-		this->addAction(ui.action_Stop);
-		this->addAction(ui.action_StepwiseScan);
+		this->addAction(ui->action_Start);
+		this->addAction(ui->action_Stop);
+		this->addAction(ui->action_StepwiseScan);
 	}
 
 	void LaserScanningSpectroscopyWidget::InitializeUI(Util::SynchronizedPointer<LaserScanningSpectroscopyData>& ModuleData)
-		{
-		const QSignalBlocker b1(ui.SBLowerFrequencyLimit);
-		const QSignalBlocker b2(ui.SBUpperFrequencyLimit);
-		const QSignalBlocker b3(ui.SBFrequencyRange);
-		const QSignalBlocker b4(ui.SBCenterFrequency);
-		const QSignalBlocker b5(ui.SBRepetitions);
-		const QSignalBlocker b6(ui.SBStepsize);
-		const QSignalBlocker b7(ui.SBNumberOfSteps);
+	{
+		const QSignalBlocker b1(ui->SBLowerFrequencyLimit);
+		const QSignalBlocker b2(ui->SBUpperFrequencyLimit);
+		const QSignalBlocker b3(ui->SBFrequencyRange);
+		const QSignalBlocker b4(ui->SBCenterFrequency);
+		const QSignalBlocker b5(ui->SBRepetitions);
+		const QSignalBlocker b6(ui->SBStepsize);
+		const QSignalBlocker b7(ui->SBNumberOfSteps);
 
-		ui.SBLowerFrequencyLimit->setRange(ModuleData->GetLaser()->GetMinFrequency() * 1e-9, ModuleData->GetLaser()->GetMaxFrequency() * 1e-9);
-		ui.SBLowerFrequencyLimit->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
-		ui.SBLowerFrequencyLimit->setValue(ModuleData->GetLaser()->GetMinFrequency() * 1e-9);
-		ui.SBUpperFrequencyLimit->setRange(ModuleData->GetLaser()->GetMinFrequency() * 1e-9, ModuleData->GetLaser()->GetMaxFrequency() * 1e-9);
-		ui.SBUpperFrequencyLimit->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
-		ui.SBUpperFrequencyLimit->setValue(ModuleData->GetLaser()->GetMinFrequency() * 1e-9 + ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
-		ui.SBFrequencyRange->setRange(0.0, ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
-		ui.SBFrequencyRange->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
-		ui.SBFrequencyRange->setValue(1);
-		ui.SBCenterFrequency->setRange(ModuleData->GetLaser()->GetMinFrequency() * 1e-9 + 0.5 * ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9, ModuleData->GetLaser()->GetMaxFrequency() * 1e-9 - 0.5 * ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
-		ui.SBCenterFrequency->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
-		ui.SBCenterFrequency->setValue(ModuleData->GetLaser()->GetMinFrequency() * 1e-9 + 0.5 * ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
-		ui.SBRepetitions->setRange(1, 10000);
-		ui.SBRepetitions->setValue(1);
-		ui.SBStepsize->setRange(1, 4000);
-		ui.SBStepsize->setSuffix(" M" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
-		ui.SBStepsize->setValue(100);
-		ui.SBNumberOfSteps->setRange(1, 10000);
-		ui.SBNumberOfSteps->setValue(ui.SBFrequencyRange->value() * 1e3 / ui.SBStepsize->value());
+		ui->SBLowerFrequencyLimit->setRange(ModuleData->GetLaser()->GetMinFrequency() * 1e-9, ModuleData->GetLaser()->GetMaxFrequency() * 1e-9);
+		ui->SBLowerFrequencyLimit->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
+		ui->SBLowerFrequencyLimit->setValue(ModuleData->GetLaser()->GetMinFrequency() * 1e-9);
+		ui->SBUpperFrequencyLimit->setRange(ModuleData->GetLaser()->GetMinFrequency() * 1e-9, ModuleData->GetLaser()->GetMaxFrequency() * 1e-9);
+		ui->SBUpperFrequencyLimit->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
+		ui->SBUpperFrequencyLimit->setValue(ModuleData->GetLaser()->GetMinFrequency() * 1e-9 + ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
+		ui->SBFrequencyRange->setRange(0.0, ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
+		ui->SBFrequencyRange->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
+		ui->SBFrequencyRange->setValue(1);
+		ui->SBCenterFrequency->setRange(ModuleData->GetLaser()->GetMinFrequency() * 1e-9 + 0.5 * ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9, ModuleData->GetLaser()->GetMaxFrequency() * 1e-9 - 0.5 * ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
+		ui->SBCenterFrequency->setSuffix(" G" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
+		ui->SBCenterFrequency->setValue(ModuleData->GetLaser()->GetMinFrequency() * 1e-9 + 0.5 * ModuleData->GetLaser()->GetModeHopFreeTuningRange() * 1e-9);
+		ui->SBRepetitions->setRange(1, 10000);
+		ui->SBRepetitions->setValue(1);
+		ui->SBStepsize->setRange(1, 4000);
+		ui->SBStepsize->setSuffix(" M" + QString(DynExpInstr::LaserData::FrequencyUnitTypeToStr(ModuleData->GetLaser()->GetFrequencyUnit())));
+		ui->SBStepsize->setValue(100);
+		ui->SBNumberOfSteps->setRange(1, 10000);
+		ui->SBNumberOfSteps->setValue(ui->SBFrequencyRange->value() * 1e3 / ui->SBStepsize->value());
 
-		ModuleData->LowerFrequencyLimit = ui.SBLowerFrequencyLimit->value() * 1e9; 
-		ModuleData->UpperFrequencyLimit = ui.SBUpperFrequencyLimit->value() * 1e9;
-		ModuleData->FrequencyRange = ui.SBFrequencyRange->value() * 1e9; 
-		ModuleData->CenterFrequency = ui.SBCenterFrequency->value() * 1e9; 
-		ModuleData->Stepsize = ui.SBStepsize->value() * 1e6; 
-		ModuleData->NumberOfSteps = ui.SBNumberOfSteps->value(); 
-		ModuleData->Repetitions = ui.SBRepetitions->value(); 
-		ModuleData->StartingPoint = ui.RBStartAtMinimum->isChecked() ? ModuleData->LowerFrequencyLimit : ModuleData->UpperFrequencyLimit; 
-		ModuleData->EndingPoint = ui.RBStartAtMinimum->isChecked() ? ModuleData->UpperFrequencyLimit : ModuleData->LowerFrequencyLimit; 
-		ModuleData->ScanBackAndForth = ui.CBScanBackAndForth->isChecked();
+		ModuleData->LowerFrequencyLimit = ui->SBLowerFrequencyLimit->value() * 1e9; 
+		ModuleData->UpperFrequencyLimit = ui->SBUpperFrequencyLimit->value() * 1e9;
+		ModuleData->FrequencyRange = ui->SBFrequencyRange->value() * 1e9; 
+		ModuleData->CenterFrequency = ui->SBCenterFrequency->value() * 1e9; 
+		ModuleData->Stepsize = ui->SBStepsize->value() * 1e6; 
+		ModuleData->NumberOfSteps = ui->SBNumberOfSteps->value(); 
+		ModuleData->Repetitions = ui->SBRepetitions->value(); 
+		ModuleData->StartingPoint = ui->RBStartAtMinimum->isChecked() ? ModuleData->LowerFrequencyLimit : ModuleData->UpperFrequencyLimit; 
+		ModuleData->EndingPoint = ui->RBStartAtMinimum->isChecked() ? ModuleData->UpperFrequencyLimit : ModuleData->LowerFrequencyLimit; 
+		ModuleData->ScanBackAndForth = ui->CBScanBackAndForth->isChecked();
 	}
 
 	void LaserScanningSpectroscopyData::ResetImpl(dispatch_tag<QModuleDataBase>)
@@ -111,21 +109,21 @@ namespace DynExpModule::LaserScanningSpectroscopy
 	{
 		auto Widget = std::make_unique<LaserScanningSpectroscopyWidget>(*this);
 
-		Connect(Widget->GetUI().action_Start, &QAction::triggered, this, &LaserScanningSpectroscopy::OnStartClicked);
-		Connect(Widget->GetUI().action_Stop, &QAction::triggered, this, &LaserScanningSpectroscopy::OnStopClicked);
-		//Connect(Widget->GetUI().action_StepwiseScan, &QAction::toggled, this, &LaserScanningSpectroscopy::OnStepwiseScanToggled);
+		Connect(Widget->GetUI()->action_Start, &QAction::triggered, this, &LaserScanningSpectroscopy::OnStartClicked);
+		Connect(Widget->GetUI()->action_Stop, &QAction::triggered, this, &LaserScanningSpectroscopy::OnStopClicked);
+		//Connect(Widget->GetUI()->action_StepwiseScan, &QAction::toggled, this, &LaserScanningSpectroscopy::OnStepwiseScanToggled);
 
-		Connect(Widget->GetUI().SBLowerFrequencyLimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnLowerFrequencyLimitChanged);
-		Connect(Widget->GetUI().SBUpperFrequencyLimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnUpperFrequencyLimitChanged);
-		Connect(Widget->GetUI().SBFrequencyRange, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnFrequencyRangeChanged);
-		Connect(Widget->GetUI().SBCenterFrequency, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnFrequencyCenterChanged);
-		Connect(Widget->GetUI().SBStepsize, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnStepsizeChanged);
-		Connect(Widget->GetUI().SBNumberOfSteps, QOverload<int>::of(&QSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnNumberOfStepsChanged);
-		Connect(Widget->GetUI().SBRepetitions, QOverload<int>::of(&QSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnRepetitionsChanged);
-		Connect(Widget->GetUI().RBStartAtMinimum, &QRadioButton::toggled, this, &LaserScanningSpectroscopy::OnStartAtMinimumToggled);
-		Connect(Widget->GetUI().RBStartAtMaximum, &QRadioButton::toggled, this, &LaserScanningSpectroscopy::OnStartAtMaximumToggled);
-		Connect(Widget->GetUI().CBScanBackAndForth, &QCheckBox::toggled, this, &LaserScanningSpectroscopy::OnScanBackAndForthToggled);
-		Connect(Widget->GetUI().LEPath, &QLineEdit::textChanged, this, &LaserScanningSpectroscopy::OnPath);
+		Connect(Widget->GetUI()->SBLowerFrequencyLimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnLowerFrequencyLimitChanged);
+		Connect(Widget->GetUI()->SBUpperFrequencyLimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnUpperFrequencyLimitChanged);
+		Connect(Widget->GetUI()->SBFrequencyRange, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnFrequencyRangeChanged);
+		Connect(Widget->GetUI()->SBCenterFrequency, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnFrequencyCenterChanged);
+		Connect(Widget->GetUI()->SBStepsize, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnStepsizeChanged);
+		Connect(Widget->GetUI()->SBNumberOfSteps, QOverload<int>::of(&QSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnNumberOfStepsChanged);
+		Connect(Widget->GetUI()->SBRepetitions, QOverload<int>::of(&QSpinBox::valueChanged), this, &LaserScanningSpectroscopy::OnRepetitionsChanged);
+		Connect(Widget->GetUI()->RBStartAtMinimum, &QRadioButton::toggled, this, &LaserScanningSpectroscopy::OnStartAtMinimumToggled);
+		Connect(Widget->GetUI()->RBStartAtMaximum, &QRadioButton::toggled, this, &LaserScanningSpectroscopy::OnStartAtMaximumToggled);
+		Connect(Widget->GetUI()->CBScanBackAndForth, &QCheckBox::toggled, this, &LaserScanningSpectroscopy::OnScanBackAndForthToggled);
+		Connect(Widget->GetUI()->LEPath, &QLineEdit::textChanged, this, &LaserScanningSpectroscopy::OnPath);
 
 		return Widget;
 	}
@@ -145,47 +143,47 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		const bool SettingFrequency = IsSettingFrequencyState();
 		const bool Capturing = IsCapturingState();
 
-		Widget->ui.action_Start->setEnabled(Ready && ModuleData->LaserState != DynExpInstr::LaserData::LaserStateType::Startup); //|| ModuleData->LaserState = DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning));
-		Widget->ui.action_Stop->setEnabled(!Ready);
-		Widget->ui.action_StepwiseScan->setEnabled(Ready && ModuleData->LaserState != DynExpInstr::LaserData::LaserStateType::Startup);
+		Widget->ui->action_Start->setEnabled(Ready && ModuleData->LaserState != DynExpInstr::LaserData::LaserStateType::Startup); //|| ModuleData->LaserState = DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning));
+		Widget->ui->action_Stop->setEnabled(!Ready);
+		Widget->ui->action_StepwiseScan->setEnabled(Ready && ModuleData->LaserState != DynExpInstr::LaserData::LaserStateType::Startup);
 
-		Widget->ui.SBLowerFrequencyLimit->setEnabled(Ready);
-		Widget->ui.SBUpperFrequencyLimit->setEnabled(Ready);
-		Widget->ui.SBFrequencyRange->setEnabled(Ready);
-		Widget->ui.SBCenterFrequency->setEnabled(Ready);
-		Widget->ui.SBStepsize->setEnabled(Ready);
-		Widget->ui.SBNumberOfSteps->setEnabled(Ready);
-		Widget->ui.RBStartAtMinimum->setEnabled(Ready && ModuleData->StepwiseScan);
-		Widget->ui.RBStartAtMaximum->setEnabled(Ready && ModuleData->StepwiseScan);
-		Widget->ui.CBScanBackAndForth->setEnabled(Ready && ModuleData->StepwiseScan);
-		Widget->ui.SBRepetitions->setEnabled(Ready);
-		Widget->ui.PBLaserScanningSpectroscopyProgress->setVisible(true);
-		Widget->ui.PBLaserScanningSpectroscopyProgress->setValue(static_cast<int>(100.0 * ModuleData->LaserScanningSpectroscopyProgress/(ModuleData->Repetitions*(ModuleData->NumberOfSteps+1))));
+		Widget->ui->SBLowerFrequencyLimit->setEnabled(Ready);
+		Widget->ui->SBUpperFrequencyLimit->setEnabled(Ready);
+		Widget->ui->SBFrequencyRange->setEnabled(Ready);
+		Widget->ui->SBCenterFrequency->setEnabled(Ready);
+		Widget->ui->SBStepsize->setEnabled(Ready);
+		Widget->ui->SBNumberOfSteps->setEnabled(Ready);
+		Widget->ui->RBStartAtMinimum->setEnabled(Ready && ModuleData->StepwiseScan);
+		Widget->ui->RBStartAtMaximum->setEnabled(Ready && ModuleData->StepwiseScan);
+		Widget->ui->CBScanBackAndForth->setEnabled(Ready && ModuleData->StepwiseScan);
+		Widget->ui->SBRepetitions->setEnabled(Ready);
+		Widget->ui->PBLaserScanningSpectroscopyProgress->setVisible(true);
+		Widget->ui->PBLaserScanningSpectroscopyProgress->setValue(static_cast<int>(100.0 * ModuleData->LaserScanningSpectroscopyProgress/(ModuleData->Repetitions*(ModuleData->NumberOfSteps+1))));
 		
 		if (Ready)
 		{
-			Widget->ui.LLaserScanningSpectroscopyState->setText(" State: Ready");
-			Widget->ui.PBLaserScanningSpectroscopyProgress->setVisible(false);
+			Widget->ui->LLaserScanningSpectroscopyState->setText(" State: Ready");
+			Widget->ui->PBLaserScanningSpectroscopyProgress->setVisible(false);
 		}
 		else if (SettingFrequency)
-			Widget->ui.LLaserScanningSpectroscopyState->setText(" State: Stabilizing");
+			Widget->ui->LLaserScanningSpectroscopyState->setText(" State: Stabilizing");
 		else if (Capturing)
-			Widget->ui.LLaserScanningSpectroscopyState->setText(" State: Capturing");
+			Widget->ui->LLaserScanningSpectroscopyState->setText(" State: Capturing");
 		else
-			Widget->ui.LLaserScanningSpectroscopyState->setText(" State: ");
+			Widget->ui->LLaserScanningSpectroscopyState->setText(" State: ");
 
-		if (Widget->ui.action_StepwiseScan->isChecked())
+		if (Widget->ui->action_StepwiseScan->isChecked())
 		{
 			ModuleData->StepwiseScan = true;
-			ModuleData->StartingPoint = Widget->ui.RBStartAtMinimum->isChecked() ? ModuleData->LowerFrequencyLimit : ModuleData->UpperFrequencyLimit;
-			ModuleData->EndingPoint = Widget->ui.RBStartAtMinimum->isChecked() ? ModuleData->UpperFrequencyLimit : ModuleData->LowerFrequencyLimit;
+			ModuleData->StartingPoint = Widget->ui->RBStartAtMinimum->isChecked() ? ModuleData->LowerFrequencyLimit : ModuleData->UpperFrequencyLimit;
+			ModuleData->EndingPoint = Widget->ui->RBStartAtMinimum->isChecked() ? ModuleData->UpperFrequencyLimit : ModuleData->LowerFrequencyLimit;
 		}
 		else
 		{
 			ModuleData->StepwiseScan = false;
 			ModuleData->StartingPoint = ModuleData->CenterFrequency;
 		}
-		ModuleData->ScanBackAndForth = Widget->ui.CBScanBackAndForth->isChecked();
+		ModuleData->ScanBackAndForth = Widget->ui->CBScanBackAndForth->isChecked();
 	}
 
 	Util::DynExpErrorCodes::DynExpErrorCodes LaserScanningSpectroscopy::ModuleMainLoop(DynExp::ModuleInstance& Instance)
@@ -345,7 +343,7 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		if (Path.isEmpty())
 			return;
 
-		ui.LEPath->setText(Path);
+		ui->LEPath->setText(Path);
 	}
 
 	/*void LaserScanningSpectroscopyWidget::OnPathBrowseClicked()
@@ -356,7 +354,7 @@ namespace DynExpModule::LaserScanningSpectroscopy
 			return;
 
 		// Emits signal to update module data accordingly.
-		ui.LEPath->setText(Filename);
+		ui->LEPath->setText(Filename);
 	}*/
 
 	void LaserScanningSpectroscopy::OnLowerFrequencyLimitChanged(DynExp::ModuleInstance* Instance, double LowerFrequencyLimit) const
@@ -386,14 +384,14 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		ModuleData->NumberOfSteps = NewFrequencyRange / (ModuleData->Stepsize);
 		ModuleData->GetLaser()->SetScanRange(NewFrequencyRange);
 		
-		const QSignalBlocker b2(Widget->ui.SBUpperFrequencyLimit);
-		const QSignalBlocker b3(Widget->ui.SBFrequencyRange);
-		const QSignalBlocker b4(Widget->ui.SBCenterFrequency);
-		const QSignalBlocker b7(Widget->ui.SBNumberOfSteps);
-		Widget->ui.SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
-		Widget->ui.SBFrequencyRange->setValue(ModuleData->FrequencyRange / 1e9);
-		Widget->ui.SBCenterFrequency->setValue(ModuleData->CenterFrequency / 1e9);
-		Widget->ui.SBUpperFrequencyLimit->setValue(ModuleData->UpperFrequencyLimit / 1e9);
+		const QSignalBlocker b2(Widget->ui->SBUpperFrequencyLimit);
+		const QSignalBlocker b3(Widget->ui->SBFrequencyRange);
+		const QSignalBlocker b4(Widget->ui->SBCenterFrequency);
+		const QSignalBlocker b7(Widget->ui->SBNumberOfSteps);
+		Widget->ui->SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
+		Widget->ui->SBFrequencyRange->setValue(ModuleData->FrequencyRange / 1e9);
+		Widget->ui->SBCenterFrequency->setValue(ModuleData->CenterFrequency / 1e9);
+		Widget->ui->SBUpperFrequencyLimit->setValue(ModuleData->UpperFrequencyLimit / 1e9);
 	}
 	
 	void LaserScanningSpectroscopy::OnUpperFrequencyLimitChanged(DynExp::ModuleInstance* Instance, double UpperFrequencyLimit) const
@@ -423,14 +421,14 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		ModuleData->NumberOfSteps = NewFrequencyRange / (ModuleData->Stepsize);
 		ModuleData->GetLaser()->SetScanRange(NewFrequencyRange);
 		
-		const QSignalBlocker b1(Widget->ui.SBLowerFrequencyLimit);
-		const QSignalBlocker b3(Widget->ui.SBFrequencyRange);
-		const QSignalBlocker b4(Widget->ui.SBCenterFrequency);
-		const QSignalBlocker b7(Widget->ui.SBNumberOfSteps);
-		Widget->ui.SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
-		Widget->ui.SBFrequencyRange->setValue(NewFrequencyRange / 1e9);
-		Widget->ui.SBCenterFrequency->setValue(ModuleData->CenterFrequency / 1e9);
-		Widget->ui.SBLowerFrequencyLimit->setValue(ModuleData->LowerFrequencyLimit / 1e9);
+		const QSignalBlocker b1(Widget->ui->SBLowerFrequencyLimit);
+		const QSignalBlocker b3(Widget->ui->SBFrequencyRange);
+		const QSignalBlocker b4(Widget->ui->SBCenterFrequency);
+		const QSignalBlocker b7(Widget->ui->SBNumberOfSteps);
+		Widget->ui->SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
+		Widget->ui->SBFrequencyRange->setValue(NewFrequencyRange / 1e9);
+		Widget->ui->SBCenterFrequency->setValue(ModuleData->CenterFrequency / 1e9);
+		Widget->ui->SBLowerFrequencyLimit->setValue(ModuleData->LowerFrequencyLimit / 1e9);
 	}
 	
 	void LaserScanningSpectroscopy::OnFrequencyRangeChanged(DynExp::ModuleInstance* Instance, double FrequencyRange) const
@@ -454,14 +452,14 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		ModuleData->NumberOfSteps = NewFrequencyRange / (ModuleData->Stepsize);
 		ModuleData->GetLaser()->SetScanRange(NewFrequencyRange);
 		
-		const QSignalBlocker b2(Widget->ui.SBUpperFrequencyLimit);
-		const QSignalBlocker b3(Widget->ui.SBFrequencyRange);
-		const QSignalBlocker b4(Widget->ui.SBCenterFrequency);
-		const QSignalBlocker b7(Widget->ui.SBNumberOfSteps);
-		Widget->ui.SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
-		Widget->ui.SBFrequencyRange->setValue(ModuleData->FrequencyRange / 1e9);
-		Widget->ui.SBCenterFrequency->setValue(ModuleData->CenterFrequency / 1e9);
-		Widget->ui.SBUpperFrequencyLimit->setValue(ModuleData->UpperFrequencyLimit / 1e9);
+		const QSignalBlocker b2(Widget->ui->SBUpperFrequencyLimit);
+		const QSignalBlocker b3(Widget->ui->SBFrequencyRange);
+		const QSignalBlocker b4(Widget->ui->SBCenterFrequency);
+		const QSignalBlocker b7(Widget->ui->SBNumberOfSteps);
+		Widget->ui->SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
+		Widget->ui->SBFrequencyRange->setValue(ModuleData->FrequencyRange / 1e9);
+		Widget->ui->SBCenterFrequency->setValue(ModuleData->CenterFrequency / 1e9);
+		Widget->ui->SBUpperFrequencyLimit->setValue(ModuleData->UpperFrequencyLimit / 1e9);
 	}
 
 	void LaserScanningSpectroscopy::OnFrequencyCenterChanged(DynExp::ModuleInstance* Instance, double FrequencyCenter) const
@@ -474,10 +472,10 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		ModuleData->UpperFrequencyLimit = FrequencyCenter * 1e9 + ModuleData->FrequencyRange/2;
 		ModuleData->LowerFrequencyLimit = FrequencyCenter * 1e9 - ModuleData->FrequencyRange/2;
 		
-		const QSignalBlocker b1(Widget->ui.SBLowerFrequencyLimit);
-		const QSignalBlocker b2(Widget->ui.SBUpperFrequencyLimit);
-		Widget->ui.SBLowerFrequencyLimit->setValue(ModuleData->LowerFrequencyLimit / 1e9);
-		Widget->ui.SBUpperFrequencyLimit->setValue(ModuleData->UpperFrequencyLimit / 1e9);
+		const QSignalBlocker b1(Widget->ui->SBLowerFrequencyLimit);
+		const QSignalBlocker b2(Widget->ui->SBUpperFrequencyLimit);
+		Widget->ui->SBLowerFrequencyLimit->setValue(ModuleData->LowerFrequencyLimit / 1e9);
+		Widget->ui->SBUpperFrequencyLimit->setValue(ModuleData->UpperFrequencyLimit / 1e9);
 	}
 
 	void LaserScanningSpectroscopy::OnStepsizeChanged(DynExp::ModuleInstance* Instance, double Stepsize) const
@@ -489,8 +487,8 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		// modify NumberOfSteps to match new Stepsize
 		ModuleData->NumberOfSteps = ModuleData->FrequencyRange / (Stepsize * 1e6);
 
-		const QSignalBlocker b7(Widget->ui.SBNumberOfSteps);
-		Widget->ui.SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
+		const QSignalBlocker b7(Widget->ui->SBNumberOfSteps);
+		Widget->ui->SBNumberOfSteps->setValue(ModuleData->NumberOfSteps);
 	}
 
 	void LaserScanningSpectroscopy::OnNumberOfStepsChanged(DynExp::ModuleInstance* Instance, int NumberOfSteps) const
@@ -502,8 +500,8 @@ namespace DynExpModule::LaserScanningSpectroscopy
 		// modify Stepsize to match new NumberOfSteps
 		ModuleData->Stepsize = ModuleData->FrequencyRange / NumberOfSteps;
 
-		const QSignalBlocker b6(Widget->ui.SBStepsize);
-		Widget->ui.SBStepsize->setValue(ModuleData->Stepsize / 1e6);
+		const QSignalBlocker b6(Widget->ui->SBStepsize);
+		Widget->ui->SBStepsize->setValue(ModuleData->Stepsize / 1e6);
 	}
 
 	void LaserScanningSpectroscopy::OnRepetitionsChanged(DynExp::ModuleInstance* Instance, int Repetitions) const
@@ -520,15 +518,15 @@ namespace DynExpModule::LaserScanningSpectroscopy
 
 		if (Checked)
 		{
-			const QSignalBlocker b8(Widget->ui.RBStartAtMaximum);
-			Widget->ui.RBStartAtMaximum->setChecked(false);
+			const QSignalBlocker b8(Widget->ui->RBStartAtMaximum);
+			Widget->ui->RBStartAtMaximum->setChecked(false);
 			ModuleData->StartingPoint = ModuleData->LowerFrequencyLimit;
 			ModuleData->EndingPoint = ModuleData->UpperFrequencyLimit;
 		}
 		else
 		{
-			const QSignalBlocker b8(Widget->ui.RBStartAtMaximum);
-			Widget->ui.RBStartAtMaximum->setChecked(true);
+			const QSignalBlocker b8(Widget->ui->RBStartAtMaximum);
+			Widget->ui->RBStartAtMaximum->setChecked(true);
 			ModuleData->StartingPoint = ModuleData->UpperFrequencyLimit;
 			ModuleData->EndingPoint = ModuleData->LowerFrequencyLimit;
 		}
@@ -541,15 +539,15 @@ namespace DynExpModule::LaserScanningSpectroscopy
 
 		if (Checked)
 		{
-			const QSignalBlocker b9(Widget->ui.RBStartAtMinimum);
-			Widget->ui.RBStartAtMinimum->setChecked(false);
+			const QSignalBlocker b9(Widget->ui->RBStartAtMinimum);
+			Widget->ui->RBStartAtMinimum->setChecked(false);
 			ModuleData->StartingPoint = ModuleData->UpperFrequencyLimit;
 			ModuleData->EndingPoint = ModuleData->LowerFrequencyLimit;
 		}
 		else
 		{
-			const QSignalBlocker b9(Widget->ui.RBStartAtMinimum);
-			Widget->ui.RBStartAtMinimum->setChecked(true);
+			const QSignalBlocker b9(Widget->ui->RBStartAtMinimum);
+			Widget->ui->RBStartAtMinimum->setChecked(true);
 			ModuleData->StartingPoint = ModuleData->LowerFrequencyLimit;
 			ModuleData->EndingPoint = ModuleData->UpperFrequencyLimit;
 		}

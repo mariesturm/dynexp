@@ -6,76 +6,83 @@ import public "Common.proto";
 
 package DynExpProto.NetworkLaser;
 
-enum StateType {
-    Ready = 0;
-    Startup = 1;
-    EmissionEnabledConstant = 2;
-    EmissionEnabledScanning = 3;
-    Error = 4;
+enum StateType
+{
+	Ready = 0;
+	Startup = 1;
+	EnabledConstant = 2;
+	EnabledScanning = 3;
+	ErrorState = 4;
 }
 
-enum ValidationStatus {
-
-    OK = 0;
-    InvalidValue = 1;
-    InvalidMethod = 2;
+enum ResultType
+{
+	OK = 0;
+	GeneralError = 1;
+	InvalidValue = 2;
+	InvalidMethod = 3;
 }
 
-message DeviceInfoMessage {
-    DynExpProto.Common.FrequencyUnitType FrequencyUnit = 1;
-    DynExpProto.Common.UnitType IntensityUnit = 2;
-    double HardwareMinFrequency = 3;
-    double HardwareMaxFrequency = 4;
-    double HardwareMinIntensity = 5;
-    double HardwareMaxIntensity = 6;
-    double HardwareMinBandwidth = 7;
-    double HardwareMaxBandwidth = 8;
-    double HardwareMaxRate = 9;
-    double HardwareModeHopFreeTuningRange = 10;
+message DeviceInfoMessage
+{
+	DynExpProto.Common.FrequencyUnitType FrequencyUnit = 1;
+	DynExpProto.Common.UnitType IntensityUnit = 2;
+	double HardwareMinFrequency = 3;                            // in units of FrequencyUnit
+	double HardwareMaxFrequency = 4;                            // in units of FrequencyUnit
+	double HardwareMinIntensity = 5;                            // in units of IntensityUnit
+	double HardwareMaxIntensity = 6;                            // in units of IntensityUnit
+	double HardwareMinScanRange = 7;							// in units of FrequencyUnit
+	double HardwareMaxScanRange = 8;							// in units of FrequencyUnit
+	double HardwareMaxScanRate = 9;                             // in units of FrequencyUnit per second
+	double HardwareModeHopFreeTuningRange = 10;                 // in units of FrequencyUnit
 }
 
-message StateMessage {
-    StateType State = 1;
+message StateMessage
+{
+	StateType State = 1;
 }
 
-message FrequencyMessage {
-    double Frequency = 1;
+message FrequencyMessage
+{
+	double Frequency = 1;
 }
 
-message IntensityMessage {
-    double Intensity = 1;
+message IntensityMessage
+{
+	double Intensity = 1;
 }
 
-message RangeMessage {
-    double BandwidthInFreqUnit = 1;
+message ScanRangeMessage
+{
+	double ScanRangeInFreqUnit = 1;
 }
 
-message RateMessage {
-    double SpeedInFreqUnitPerSecond = 1;
+message ScanRateMessage
+{
+	double ScanRateInFreqUnitPerSecond = 1;
 }
 
-message ValidationMessage {
-    ValidationStatus Status = 1;
+message ResultMessage
+{
+	ResultType Result = 1;
 }
 
-service NetworkLaser {
-    rpc GetDeviceInfo (DynExpProto.Common.VoidMessage) returns (DeviceInfoMessage);
-    rpc GetState (DynExpProto.Common.VoidMessage) returns (StateMessage);
+service NetworkLaser
+{
+	rpc GetDeviceInfo (DynExpProto.Common.VoidMessage) returns (DeviceInfoMessage);
+	rpc GetState (DynExpProto.Common.VoidMessage) returns (StateMessage);
 
-    rpc SetFrequency (FrequencyMessage) returns (ValidationMessage);
-    rpc GetFrequency (DynExpProto.Common.VoidMessage) returns (FrequencyMessage);
+	rpc SetFrequency (FrequencyMessage) returns (ResultMessage);
+	rpc GetFrequency (DynExpProto.Common.VoidMessage) returns (FrequencyMessage);
+	rpc SetIntensity (IntensityMessage) returns (ResultMessage);
+	rpc GetIntensity (DynExpProto.Common.VoidMessage) returns (IntensityMessage);
+	rpc SetScanRange (ScanRangeMessage) returns (ResultMessage);
+	rpc GetScanRange (DynExpProto.Common.VoidMessage) returns (ScanRangeMessage);
+	rpc SetScanRate (ScanRateMessage) returns (ResultMessage);
+	rpc GetScanRate (DynExpProto.Common.VoidMessage) returns (ScanRateMessage);
 
-    rpc SetIntensity (IntensityMessage) returns (ValidationMessage);
-    rpc GetIntensity (DynExpProto.Common.VoidMessage) returns (IntensityMessage);
-
-    rpc SetScanRange (RangeMessage) returns (ValidationMessage);
-    rpc GetScanRange (DynExpProto.Common.VoidMessage) returns (RangeMessage);
-
-    rpc SetScanRate (RateMessage) returns (ValidationMessage);
-    rpc GetScanRate (DynExpProto.Common.VoidMessage) returns (RateMessage);
-
-    rpc Enable (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
-    rpc ScanContinuously (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
-    rpc DisableScan (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
-    rpc Disable (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
+	rpc Enable (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
+	rpc ScanContinuously (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
+	rpc DisableScan (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
+	rpc Disable (DynExpProto.Common.VoidMessage) returns (DynExpProto.Common.VoidMessage);
 }

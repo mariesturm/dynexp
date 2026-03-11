@@ -2,7 +2,7 @@
 
 /**
  * @file Laser.h
- * @brief Defines a meta instrument for a laser.
+ * @brief Defines a meta instrument for a laser source.
 */
 
 #pragma once

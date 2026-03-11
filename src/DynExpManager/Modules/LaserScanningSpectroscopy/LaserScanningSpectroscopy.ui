@@ -19,9 +19,51 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QToolBar" name="MainToolBar">
+     <property name="windowTitle">
+      <string>toolBar</string>
+     </property>
+     <property name="movable">
+      <bool>false</bool>
+     </property>
+     <property name="floatable">
+      <bool>false</bool>
+     </property>
+     <addaction name="action_Start"/>
+     <addaction name="action_Stop"/>
+     <addaction name="separator"/>
+     <addaction name="action_StepwiseScan"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="mainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
        <horstretch>0</horstretch>
@@ -39,302 +81,330 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>9</number>
       </property>
       <property name="topMargin">
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>9</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>9</number>
       </property>
       <item>
-       <widget class="QToolBar" name="MainToolBar">
-        <property name="windowTitle">
-         <string>toolBar</string>
+       <widget class="QGroupBox" name="GBScanRange">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="movable">
-         <bool>false</bool>
+        <property name="title">
+         <string>Scan range</string>
         </property>
-        <property name="floatable">
-         <bool>false</bool>
-        </property>
-        <addaction name="separator"/>
-        <addaction name="action_Start"/>
-        <addaction name="separator"/>
-        <addaction name="action_Stop"/>
-        <addaction name="separator"/>
-        <addaction name="action_StepwiseScan"/>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="horizontalSpacing">
+          <number>12</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="LLowerFrequencyLimit">
+           <property name="text">
+            <string>Lower frequency limit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="LUpperFrequencyLimit">
+           <property name="text">
+            <string>Upper frequency limit</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QDoubleSpinBox" name="SBLowerFrequencyLimit">
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
+           <property name="maximum">
+            <double>999000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="SBUpperFrequencyLimit">
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
+           <property name="maximum">
+            <double>999000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="LFrequencyRange">
+           <property name="text">
+            <string>Frequency range</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="LCenterFrequency">
+           <property name="text">
+            <string>Center frequency</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QDoubleSpinBox" name="SBFrequencyRange">
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="SBCenterFrequency">
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="decimals">
+            <number>6</number>
+           </property>
+           <property name="maximum">
+            <double>999000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
+       <widget class="QGroupBox" name="GBStepSize">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Scan steps</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="horizontalSpacing">
+          <number>12</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="LStepsize">
+           <property name="text">
+            <string>Step size</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="LNumberOfSteps">
+           <property name="text">
+            <string>Number of steps</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QDoubleSpinBox" name="SBStepsize">
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="SBNumberOfSteps"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="GBRepetitions">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Scan repetitions</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="LRepetitions">
+             <property name="text">
+              <string>Number of repetitions</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="SBRepetitions"/>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="CBScanBackAndForth">
+             <property name="text">
+              <string>Scan back and forth</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="GBStartAt">
+           <property name="title">
+            <string>Start at...</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QRadioButton" name="RBStartAtMinimum">
+              <property name="text">
+               <string>Minimum frequency</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="RBStartAtMaximum">
+              <property name="text">
+               <string>Maximum frequency</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="GBGeneral">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>General settings</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="LPath">
+           <property name="text">
+            <string>Save file path</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="LEPath">
+           <property name="mouseTracking">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="BPathBrowse">
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Browse...</string>
+           </property>
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../DynExpManager.qrc">
+             <normaloff>:/DynExpManager/icons/Document-open.svg</normaloff>:/DynExpManager/icons/Document-open.svg</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Scan Range</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <property name="horizontalSpacing">
-         <number>30</number>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
         </property>
-        <item row="1" column="0">
-         <widget class="QDoubleSpinBox" name="SBLowerFrequencyLimit">
-          <property name="keyboardTracking">
-           <bool>false</bool>
-          </property>
-          <property name="decimals">
-           <number>6</number>
-          </property>
-          <property name="maximum">
-           <double>999000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QDoubleSpinBox" name="SBCenterFrequency">
-          <property name="keyboardTracking">
-           <bool>false</bool>
-          </property>
-          <property name="decimals">
-           <number>6</number>
-          </property>
-          <property name="maximum">
-           <double>999000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QDoubleSpinBox" name="SBFrequencyRange">
-          <property name="keyboardTracking">
-           <bool>false</bool>
-          </property>
-          <property name="decimals">
-           <number>3</number>
-          </property>
-          <property name="maximum">
-           <double>100.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="LFrequencyRange">
-          <property name="text">
-           <string>Frequency range</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="LCenterFrequency">
-          <property name="text">
-           <string>Center frequency</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="LUpperFrequencyLimit">
-          <property name="text">
-           <string>Upper frequency limit</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="LLowerFrequencyLimit">
-          <property name="text">
-           <string>Lower frequency limit</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="SBUpperFrequencyLimit">
-          <property name="keyboardTracking">
-           <bool>false</bool>
-          </property>
-          <property name="decimals">
-           <number>6</number>
-          </property>
-          <property name="maximum">
-           <double>999000.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       </spacer>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Stepsize</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="horizontalSpacing">
-         <number>30</number>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="SBNumberOfSteps"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QDoubleSpinBox" name="SBStepsize">
-          <property name="keyboardTracking">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="LNumberOfSteps">
-          <property name="text">
-           <string>Number of steps</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="LStepsize">
-          <property name="text">
-           <string>Stepsize</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Repetitions</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <property name="horizontalSpacing">
-         <number>30</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="LRepetitions">
-          <property name="text">
-           <string>Repetitions</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSpinBox" name="SBRepetitions"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QRadioButton" name="RBStartAtMaximum">
-          <property name="text">
-           <string>Maximum frequency</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="LStartAt">
-          <property name="text">
-           <string>Start at...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QCheckBox" name="CBScanBackAndForth">
-          <property name="text">
-           <string>Scan back and forth</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QRadioButton" name="RBStartAtMinimum">
-          <property name="text">
-           <string>Minimum frequency</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="GBAutoMeasureGeneralSettings">
-     <property name="title">
-      <string>General settings</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_9">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLabel" name="LPath">
-          <property name="text">
-           <string>Save file path</string>
+         <widget class="QLabel" name="LLaserScanningSpectroscopyState">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="LEPath">
-          <property name="mouseTracking">
-           <bool>false</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="BPathBrowse">
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>0</width>
+            <height>22</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>LaserScanningSpectroscopy state:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="PBLaserScanningSpectroscopyProgress">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
             <height>0</height>
            </size>
           </property>
-          <property name="toolTip">
-           <string>Browse...</string>
-          </property>
-          <property name="text">
-           <string>Browse...</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../../DynExpManager.qrc">
-            <normaloff>:/DynExpManager/icons/Document-open.svg</normaloff>:/DynExpManager/icons/Document-open.svg</iconset>
+          <property name="value">
+           <number>0</number>
           </property>
          </widget>
         </item>
@@ -342,43 +412,6 @@
       </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="LLaserScanningSpectroscopyState">
-       <property name="text">
-        <string>LaserScanningSpectroscopy state:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QProgressBar" name="PBLaserScanningSpectroscopyProgress">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="value">
-        <number>24</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
   <action name="action_Start">
@@ -390,7 +423,7 @@
     <string>Start</string>
    </property>
    <property name="toolTip">
-    <string>Start LaserScanningSpectroscopy</string>
+    <string>Start the scan (series)</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -405,7 +438,10 @@
     <string>Stop</string>
    </property>
    <property name="toolTip">
-    <string>Stop LaserScanningSpectroscopy</string>
+    <string>Stop current action</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -420,7 +456,7 @@
      <normaloff>:/QModules/icons/Rect.svg</normaloff>:/QModules/icons/Rect.svg</iconset>
    </property>
    <property name="text">
-    <string>StepwiseScan</string>
+    <string>Stepwise scan</string>
    </property>
    <property name="toolTip">
     <string>Enables stepwise frequency tuning</string>
@@ -430,6 +466,20 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>SBLowerFrequencyLimit</tabstop>
+  <tabstop>SBUpperFrequencyLimit</tabstop>
+  <tabstop>SBFrequencyRange</tabstop>
+  <tabstop>SBCenterFrequency</tabstop>
+  <tabstop>SBStepsize</tabstop>
+  <tabstop>SBNumberOfSteps</tabstop>
+  <tabstop>SBRepetitions</tabstop>
+  <tabstop>CBScanBackAndForth</tabstop>
+  <tabstop>RBStartAtMinimum</tabstop>
+  <tabstop>RBStartAtMaximum</tabstop>
+  <tabstop>LEPath</tabstop>
+  <tabstop>BPathBrowse</tabstop>
+ </tabstops>
  <resources>
   <include location="../../DynExpManager.qrc"/>
   <include location="../../QModules.qrc"/>

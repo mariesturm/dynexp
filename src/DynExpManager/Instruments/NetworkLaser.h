@@ -63,9 +63,9 @@ namespace DynExpInstr
 		{
 		case DynExpProto::NetworkLaser::StateType::Ready: return LaserData::LaserStateType::Ready;
 		case DynExpProto::NetworkLaser::StateType::Startup: return LaserData::LaserStateType::Startup;
-		case DynExpProto::NetworkLaser::StateType::EmissionEnabledConstant: return LaserData::LaserStateType::EmissionEnabledConstant;
-		case DynExpProto::NetworkLaser::StateType::EmissionEnabledScanning: return LaserData::LaserStateType::EmissionEnabledScanning;
-		case DynExpProto::NetworkLaser::StateType::Error: return LaserData::LaserStateType::Error;
+		case DynExpProto::NetworkLaser::StateType::EnabledConstant: return LaserData::LaserStateType::EmissionEnabledConstant;
+		case DynExpProto::NetworkLaser::StateType::EnabledScanning: return LaserData::LaserStateType::EmissionEnabledScanning;
+		case DynExpProto::NetworkLaser::StateType::ErrorState: return LaserData::LaserStateType::Error;
 		default: throw Util::InvalidDataException("The given state does not exist in the DynExpProto::NetworkLaser::StateType enumeration.");
 		}
 	}
@@ -189,9 +189,9 @@ namespace DynExpInstr
 		auto GetMaxFrequency() const noexcept { return HardwareMaxFrequency; }
 		auto GetMinIntensity() const noexcept { return HardwareMinIntensity; }
 		auto GetMaxIntensity() const noexcept { return HardwareMaxIntensity; }
-		auto GetMinBandwidth() const noexcept { return HardwareMinBandwidth; }
-		auto GetMaxBandwidth() const noexcept { return HardwareMaxBandwidth; }
-		auto GetMaxRate() const noexcept { return HardwareMaxRate; }
+		auto GetMinScanRange() const noexcept { return HardwareMinScanRange; }
+		auto GetMaxScanRange() const noexcept { return HardwareMaxScanRange; }
+		auto GetMaxScanRate() const noexcept { return HardwareMaxScanRate; }
 		auto GetModeHopFreeTuningRange() const noexcept { return HardwareModeHopFreeTuningRange; }
 
 	private:
@@ -206,9 +206,9 @@ namespace DynExpInstr
 		double HardwareMaxFrequency = 0.0;
 		double HardwareMinIntensity = 0.0;
 		double HardwareMaxIntensity = 0.0;
-		double HardwareMinBandwidth = 0.0;
-		double HardwareMaxBandwidth = 0.0;
-		double HardwareMaxRate = 0.0;
+		double HardwareMinScanRange = 0.0;
+		double HardwareMaxScanRange = 0.0;
+		double HardwareMaxScanRate = 0.0;
 		double HardwareModeHopFreeTuningRange = 0.0;
 
 		LaserStateType LaserState = LaserStateType::Ready;
@@ -262,9 +262,9 @@ namespace DynExpInstr
 		virtual double GetMaxFrequency() const;
 		virtual double GetMinIntensity() const;
 		virtual double GetMaxIntensity() const;
-		virtual double GetMinBandwidth() const;
-		virtual double GetMaxBandwidth() const;
-		virtual double GetMaxRate() const;
+		virtual double GetMinScanRange() const;
+		virtual double GetMaxScanRange() const;
+		virtual double GetMaxScanRate() const;
 		virtual double GetModeHopFreeTuningRange() const;
 
 		// Logical const-ness: const member functions to allow inserting tasks into task queue.

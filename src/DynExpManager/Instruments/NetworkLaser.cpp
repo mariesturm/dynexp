@@ -24,9 +24,9 @@ namespace DynExpInstr
 			InstrData->HardwareMaxFrequency = Response.hardwaremaxfrequency();
 			InstrData->HardwareMinIntensity = Response.hardwareminintensity();
 			InstrData->HardwareMaxIntensity = Response.hardwaremaxintensity();
-			InstrData->HardwareMinBandwidth = Response.hardwareminbandwidth();
-			InstrData->HardwareMaxBandwidth = Response.hardwaremaxbandwidth();
-			InstrData->HardwareMaxRate = Response.hardwaremaxrate();
+			InstrData->HardwareMinScanRange = Response.hardwareminscanrange();
+			InstrData->HardwareMaxScanRange = Response.hardwaremaxscanrange();
+			InstrData->HardwareMaxScanRate = Response.hardwaremaxscanrate();
 			InstrData->HardwareModeHopFreeTuningRange = Response.hardwaremodehopfreetuningrange();
 
 		} // InstrData unlocked here.
@@ -79,8 +79,8 @@ namespace DynExpInstr
 			InstrData->LaserState = ToLaserStateType(StateResponse.state());
 			InstrData->SetFrequencyValue(FrequencyResponse.frequency());
 			InstrData->SetIntensityValue(IntensityResponse.intensity());
-			InstrData->SetScanRangeValue(ScanRangeResponse.bandwidthinfrequnit());
-			InstrData->SetScanRateValue(ScanRateResponse.speedinfrequnitpersecond());
+			InstrData->SetScanRangeValue(ScanRangeResponse.scanrangeinfrequnit());
+			InstrData->SetScanRateValue(ScanRateResponse.scanrateinfrequnitpersecond());
 		}
 
 		// Update derived instrument.
@@ -99,11 +99,13 @@ namespace DynExpInstr
 		Message.set_frequency(Frequency);
 
 		auto Response = InvokeStubFunc(StubPtr, &DynExpProto::NetworkLaser::NetworkLaser::Stub::SetFrequency, Message);
-		if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidValue)	
+		if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidValue)	
 			Instance.GetOwner().SetWarning("Invalid frequency value.", Util::DynExpErrorCodes::InvalidArg);
-		else if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidMethod)
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidMethod)
 			Instance.GetOwner().SetWarning("Invalid method for this laser.", Util::DynExpErrorCodes::NotAvailable);
-
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::GeneralError)
+			Instance.GetOwner().SetWarning("General error.", Util::DynExpErrorCodes::NotAvailable);
+		
 		return {};
 	}
 
@@ -119,11 +121,13 @@ namespace DynExpInstr
 		Message.set_intensity(Intensity);
 
 		auto Response = InvokeStubFunc(StubPtr, &DynExpProto::NetworkLaser::NetworkLaser::Stub::SetIntensity, Message);
-		if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidValue)
+		if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidValue)
 			Instance.GetOwner().SetWarning("Invalid intensity value.", Util::DynExpErrorCodes::InvalidArg);
-		else if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidMethod)
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidMethod)
 			Instance.GetOwner().SetWarning("Invalid method for this laser.", Util::DynExpErrorCodes::NotAvailable);
-
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::GeneralError)
+			Instance.GetOwner().SetWarning("General error.", Util::DynExpErrorCodes::NotAvailable);
+		
 		return {};
 	}
 
@@ -135,14 +139,16 @@ namespace DynExpInstr
 			StubPtr = InstrData->template GetStub<DynExpProto::NetworkLaser::NetworkLaser>();
 		} // InstrData unlocked here.
 
-		DynExpProto::NetworkLaser::RangeMessage Message;
-		Message.set_bandwidthinfrequnit(ScanRange);
+		DynExpProto::NetworkLaser::ScanRangeMessage Message;
+		Message.set_scanrangeinfrequnit(ScanRange);
 
 		auto Response = InvokeStubFunc(StubPtr, &DynExpProto::NetworkLaser::NetworkLaser::Stub::SetScanRange, Message);
-		if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidValue)
+		if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidValue)
 			Instance.GetOwner().SetWarning("Invalid scan range value.", Util::DynExpErrorCodes::InvalidArg);
-		else if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidMethod)
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidMethod)
 			Instance.GetOwner().SetWarning("Invalid method for this laser.", Util::DynExpErrorCodes::NotAvailable);
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::GeneralError)
+			Instance.GetOwner().SetWarning("General error.", Util::DynExpErrorCodes::NotAvailable);
 
 		return {};
 	}
@@ -155,14 +161,16 @@ namespace DynExpInstr
 			StubPtr = InstrData->template GetStub<DynExpProto::NetworkLaser::NetworkLaser>();
 		} // InstrData unlocked here.
 
-		DynExpProto::NetworkLaser::RateMessage Message;
-		Message.set_speedinfrequnitpersecond(ScanRate);
+		DynExpProto::NetworkLaser::ScanRateMessage Message;
+		Message.set_scanrateinfrequnitpersecond(ScanRate);
 
 		auto Response = InvokeStubFunc(StubPtr, &DynExpProto::NetworkLaser::NetworkLaser::Stub::SetScanRate, Message);
-		if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidValue)
+		if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidValue)
 			Instance.GetOwner().SetWarning("Invalid scan rate value.", Util::DynExpErrorCodes::InvalidArg);
-		else if (Response.status() == DynExpProto::NetworkLaser::ValidationStatus::InvalidMethod)
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::InvalidMethod)
 			Instance.GetOwner().SetWarning("Invalid method for this laser.", Util::DynExpErrorCodes::NotAvailable);
+		else if (Response.result() == DynExpProto::NetworkLaser::ResultType::GeneralError)
+			Instance.GetOwner().SetWarning("General error.", Util::DynExpErrorCodes::NotAvailable);
 
 		return {};
 	}
@@ -178,7 +186,7 @@ namespace DynExpInstr
 		InvokeStubFunc(StubPtr, &DynExpProto::NetworkLaser::NetworkLaser::Stub::Enable, {});
 
 		auto StateResponse = InvokeStubFunc(StubPtr, &DynExpProto::NetworkLaser::NetworkLaser::Stub::GetState, {});
-		if (StateResponse.state() != DynExpProto::NetworkLaser::StateType::EmissionEnabledConstant)
+		if (StateResponse.state() != DynExpProto::NetworkLaser::StateType::EnabledConstant)
 			Instance.GetOwner().SetWarning("Emission could not be enabled.", Util::DynExpErrorCodes::ServiceFailed);
 
 		return {};
@@ -231,9 +239,9 @@ namespace DynExpInstr
 		HardwareMaxFrequency = 0.0;
 		HardwareMinIntensity = 0.0;
 		HardwareMaxIntensity = 0.0;
-		HardwareMinBandwidth = 0.0;
-		HardwareMaxBandwidth = 0.0;
-		HardwareMaxRate = 0.0;
+		HardwareMinScanRange = 0.0;
+		HardwareMaxScanRange = 0.0;
+		HardwareMaxScanRate = 0.0;
 		HardwareModeHopFreeTuningRange = 0.0;
 
 		LaserState = LaserStateType::Ready;
@@ -288,25 +296,25 @@ namespace DynExpInstr
 		return InstrData->GetMaxIntensity();
 	}
 	
-	double NetworkLaser::GetMinBandwidth() const
+	double NetworkLaser::GetMinScanRange() const
 	{
 		auto InstrData = DynExp::dynamic_InstrumentData_cast<NetworkLaser>(GetInstrumentData());
 
-		return InstrData->GetMinBandwidth();
+		return InstrData->GetMinScanRange();
 	}
 
-	double NetworkLaser::GetMaxBandwidth() const
+	double NetworkLaser::GetMaxScanRange() const
 	{
 		auto InstrData = DynExp::dynamic_InstrumentData_cast<NetworkLaser>(GetInstrumentData());
 
-		return InstrData->GetMaxBandwidth();
+		return InstrData->GetMaxScanRange();
 	}
 
-	double NetworkLaser::GetMaxRate() const
+	double NetworkLaser::GetMaxScanRate() const
 	{
 		auto InstrData = DynExp::dynamic_InstrumentData_cast<NetworkLaser>(GetInstrumentData());
 
-		return InstrData->GetMaxRate();
+		return InstrData->GetMaxScanRate();
 	}
 
 	double NetworkLaser::GetModeHopFreeTuningRange() const

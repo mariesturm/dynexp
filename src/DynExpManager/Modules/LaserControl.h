@@ -141,8 +141,7 @@ namespace DynExpModule
 		void OnInit(DynExp::ModuleInstance* Instance) const override final;
 		void OnExit(DynExp::ModuleInstance* Instance) const override final;
 
-		void OnEnableClicked(DynExp::ModuleInstance* Instance, bool) const;
-		void OnDisableClicked(DynExp::ModuleInstance* Instance, bool) const;
+		void OnEnableToggled(DynExp::ModuleInstance* Instance, bool) const;
 		void OnScanToggled(DynExp::ModuleInstance* Instance, bool) const;
 		void OnFrequencyValueChanged(DynExp::ModuleInstance* Instance, const double Frequency) const;
 		void OnWavelengthValueChanged(DynExp::ModuleInstance* Instance, const double Wavelength) const;

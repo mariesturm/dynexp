@@ -267,19 +267,19 @@ namespace DynExpInstr
 		 * @brief Determines the minimal scan bandwidth.
 		 * @return Minimal bandwidth in units of @p GetFrequencyUnit().
 		*/
-		virtual double GetMinBandwidth() const = 0;
+		virtual double GetMinScanRange() const = 0;
 
 		/**
 		 * @brief Determines the maximal scan bandwidth.
 		 * @return Maximal scan bandwidth in units of @p GetFrequencyUnit().
 		*/
-		virtual double GetMaxBandwidth() const = 0;
+		virtual double GetMaxScanRange() const = 0;
 
 		/**
 		 * @brief Determines the maximal scan rate.
 		 * @return Maximal scan rate in units of @p GetFrequencyUnit() per second.
 		*/
-		virtual double GetMaxRate() const = 0;
+		virtual double GetMaxScanRate() const = 0;
 
 		/**
 		 * @brief Determines the mode hop free tuning range.
@@ -310,7 +310,7 @@ namespace DynExpInstr
 
 		/**
 		 * @brief Sets the laser's scan range.
-		 * @param Bandwidth Bandwidth for scan
+		 * @param ScanRange ScanRange for scan
 		 * @param CallbackFunc @copybrief DynExp::TaskBase::CallbackFunc
 		*/
 		virtual void SetScanRange(double ScanRange, DynExp::TaskBase::CallbackType CallbackFunc = nullptr) const = 0;

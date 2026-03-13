@@ -15,7 +15,7 @@ namespace DynExpModule
 
 		// For shortcuts
 		this->addAction(ui->action_Enable);
-		this->addAction(ui->action_Disable);
+		//this->addAction(ui->action_Disable);
 	}
 	
 	void LaserControlWidget::InitializeUI(Util::SynchronizedPointer<LaserControlData>& ModuleData)
@@ -47,8 +47,7 @@ namespace DynExpModule
 	void LaserControlWidget::UpdateUI(Util::SynchronizedPointer<LaserControlData>& ModuleData)
 	{
 		ui->action_Enable->setEnabled(ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::Ready);
-		ui->action_EnableScan->setEnabled(ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::Ready || ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledConstant || ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning);
-		ui->action_Disable->setEnabled(ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledConstant || ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning);
+		ui->action_Scan->setEnabled(ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::Ready || ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledConstant || ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning);
 		
 		if (std::isnan(ModuleData->Frequency))
 		{
@@ -177,9 +176,8 @@ namespace DynExpModule
 	{
 		auto Widget = std::make_unique<LaserControlWidget>(*this);
 
-		Connect(Widget->GetUI()->action_Enable, &QAction::triggered, this, &LaserControl::OnEnableClicked);
-		Connect(Widget->GetUI()->action_Disable, &QAction::triggered, this, &LaserControl::OnDisableClicked);
-		Connect(Widget->GetUI()->action_EnableScan, &QAction::toggled, this, &LaserControl::OnScanToggled);
+		Connect(Widget->GetUI()->action_Enable, &QAction::toggled, this, &LaserControl::OnEnableToggled);
+		Connect(Widget->GetUI()->action_Scan, &QAction::toggled, this, &LaserControl::OnScanToggled);
 		Connect(Widget->GetUI()->SBFrequency, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserControl::OnFrequencyValueChanged);
 		Connect(Widget->GetUI()->SBWavelength, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserControl::OnWavelengthValueChanged);
 		Connect(Widget->GetUI()->SBIntensity, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LaserControl::OnIntensityValueChanged);
@@ -216,9 +214,9 @@ namespace DynExpModule
 		ModuleData->HardwareMaxFrequency = ModuleData->GetLaser()->GetMaxFrequency();
 		ModuleData->HardwareMinIntensity = ModuleData->GetLaser()->GetMinIntensity();
 		ModuleData->HardwareMaxIntensity = ModuleData->GetLaser()->GetMaxIntensity();
-		ModuleData->HardwareMinBandwidth = ModuleData->GetLaser()->GetMinBandwidth();
-		ModuleData->HardwareMaxBandwidth = ModuleData->GetLaser()->GetMaxBandwidth();
-		ModuleData->HardwareMaxRate = ModuleData->GetLaser()->GetMaxRate();
+		ModuleData->HardwareMinBandwidth = ModuleData->GetLaser()->GetMinScanRange();
+		ModuleData->HardwareMaxBandwidth = ModuleData->GetLaser()->GetMaxScanRange();
+		ModuleData->HardwareMaxRate = ModuleData->GetLaser()->GetMaxScanRate();
 		ModuleData->HardwareModeHopFreeTuningRange = ModuleData->GetLaser()->GetModeHopFreeTuningRange();
 	}
 
@@ -229,25 +227,23 @@ namespace DynExpModule
 		Instance->UnlockObject(ModuleData->GetLaser());
 	}
 
-	void LaserControl::OnEnableClicked(DynExp::ModuleInstance* Instance, bool) const
+	void LaserControl::OnEnableToggled(DynExp::ModuleInstance* Instance, bool Checked) const
 	{
 		auto ModuleData = DynExp::dynamic_ModuleData_cast<LaserControl>(Instance->ModuleDataGetter());
 
-		ModuleData->GetLaser()->Enable();
+		//if (ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledConstant)
+		if (Checked)
+			ModuleData->GetLaser()->Disable();
+		else
+			ModuleData->GetLaser()->Enable();
 	}
 
-	void LaserControl::OnDisableClicked(DynExp::ModuleInstance* Instance, bool) const
+	void LaserControl::OnScanToggled(DynExp::ModuleInstance* Instance, bool Checked) const
 	{
 		auto ModuleData = DynExp::dynamic_ModuleData_cast<LaserControl>(Instance->ModuleDataGetter());
 
-		ModuleData->GetLaser()->Disable();
-	}
-
-	void LaserControl::OnScanToggled(DynExp::ModuleInstance* Instance, bool) const
-	{
-		auto ModuleData = DynExp::dynamic_ModuleData_cast<LaserControl>(Instance->ModuleDataGetter());
-
-		if (ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning)
+		//if (ModuleData->LaserState == DynExpInstr::LaserData::LaserStateType::EmissionEnabledScanning)
+		if (Checked)
 			ModuleData->GetLaser()->DisableScan();
 		else
 			ModuleData->GetLaser()->ScanContinuously();
